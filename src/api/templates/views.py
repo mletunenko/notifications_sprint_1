@@ -16,9 +16,9 @@ async def get_templates_list(
     session: SessionDep, query_params: TemplateListParams = Depends()
 ) -> list[TemplateSchemaOut]:
     stmt = select(TemplateModel)
-    if query_params.code:
-        like = f"%{query_params.code}%"
-        stmt = stmt.filter(TemplateModel.code.ilike(like))
+    if query_params.body:
+        like = f"%{query_params.body}%"
+        stmt = stmt.filter(TemplateModel.body.ilike(like))
     result = await session.execute(stmt)
     obj_list = result.scalars().all()
     response = [TemplateSchemaOut.model_validate(obj, from_attributes=True) for obj in obj_list]
@@ -40,7 +40,7 @@ async def get_template(template_id: UUID4, session: SessionDep) -> TemplateSchem
 
 @router.post("", summary="Создать шаблон")
 async def create_template(data: TemplateSchemaIn, session: SessionDep) -> TemplateSchemaOut:
-    new_obj = TemplateModel(code=data.code)
+    new_obj = TemplateModel(body=data.body)
     session.add(new_obj)
     await session.commit()
     response = TemplateSchemaOut.model_validate(new_obj, from_attributes=True)
@@ -60,7 +60,7 @@ async def update_template(
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND, detail=ClientErrorMessage.NOT_FOUND_TEMPLATE_ERROR.value
         )
-    template.code = data.code
+    template.body = data.body
     session.add(template)
     await session.commit()
     await session.refresh(template)

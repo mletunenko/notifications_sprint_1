@@ -1,5 +1,6 @@
 import datetime
 import uuid
+from functools import partial
 
 from pydantic import UUID4
 from sqlalchemy import TIMESTAMP, MetaData
@@ -12,9 +13,7 @@ from core.config import settings
 class Base(DeclarativeBase):
     __abstract__ = True
     metadata = MetaData(naming_convention=settings.db.naming_conventions)
-    id: Mapped[UUID4] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False
-    )
+    id: Mapped[UUID4] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     created_at: Mapped[datetime.datetime] = mapped_column(
-        TIMESTAMP(timezone=True), default=datetime.datetime.now(datetime.timezone.utc)
+        TIMESTAMP(timezone=True), default=partial(datetime.datetime.now, datetime.timezone.utc)
     )
