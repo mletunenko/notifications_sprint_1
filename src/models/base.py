@@ -4,10 +4,9 @@ import uuid
 from pydantic import UUID4
 from sqlalchemy import TIMESTAMP, MetaData
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from core.config import settings
-from utils.case_converter import camel_case_to_snake_case
 
 
 class Base(DeclarativeBase):
