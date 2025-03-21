@@ -5,6 +5,7 @@ import sentry_sdk
 import uvicorn
 from fastapi import APIRouter, FastAPI
 
+from api.notifications.views import router as notifications_router
 from api.templates.views import router as templates_router
 from core.config import settings
 
@@ -12,6 +13,7 @@ app = FastAPI()
 
 combined_router = APIRouter(prefix="/api")
 combined_router.include_router(templates_router)
+combined_router.include_router(notifications_router)
 
 app.include_router(combined_router)
 
