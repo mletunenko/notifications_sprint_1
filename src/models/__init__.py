@@ -1,2 +1,2 @@
-from .base import Base
-from .templates import Templates
+from .base import Base as Base
+from .templates import TemplateModel as TemplateModel

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from .base import Base
 
 
-class Templates(Base):
+class TemplateModel(Base):
     __tablename__ = "templates"
 
     updated_at: Mapped[datetime.datetime] = mapped_column(
