@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, PostgresDsn
+from pydantic import BaseModel, ConfigDict
 from pydantic_settings import BaseSettings
 
 
@@ -8,8 +8,8 @@ class RunConfig(BaseModel):
 
 
 class DatabaseConfig(BaseModel):
-    url: PostgresDsn = "postgresql+asyncpg://user:password@127.0.0.1:30002/notifications"
-    sync_url: PostgresDsn = "postgresql+psycopg://user:password@auth_postgres:30002/notifications"
+    url: str = "postgresql+asyncpg://user:password@127.0.0.1:30002/notifications"
+    sync_url: str = "postgresql+psycopg://user:password@auth_postgres:30002/notifications"
     echo: bool = False
     echo_pool: bool = False
     pool_size: int = 50
