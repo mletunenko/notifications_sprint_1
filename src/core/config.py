@@ -28,6 +28,7 @@ class LogstashConfig(BaseModel):
     host: str = "127.0.0.1"
     port: int = 5044
 
+
 class MailTransportSettings(BaseModel):
     host: str = "smtp.yandex.ru"
     port: int = 465
@@ -36,7 +37,7 @@ class MailTransportSettings(BaseModel):
     password: str
 
     @property
-    def from_email(self):
+    def email(self):
         return f"{self.login}@{self.domain}"
 
 
@@ -55,7 +56,7 @@ class Settings(BaseSettings):
         "https://21ebc037b0d0f712c4cd5e246511459b@o4508946947702784.ingest.us.sentry.io/4508946960875520"
     )
     queue_host: str = "localhost"
-    mail_transport: MailTransportSettings = MailTransportSettings()
+    mail_transport: MailTransportSettings
 
 
 settings = Settings()
