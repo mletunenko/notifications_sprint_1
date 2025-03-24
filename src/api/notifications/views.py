@@ -22,7 +22,7 @@ async def create_notification_task(
         "method": data.method.value,
     }
     json_body = json.dumps(body)
-
+    await rabbit_chanel.declare_queue("notifications", durable=True)
     await rabbit_chanel.default_exchange.publish(
         Message(body=json_body.encode()),
         routing_key="notifications",
