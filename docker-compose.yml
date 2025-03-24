@@ -36,6 +36,18 @@ services:
       gunicorn -w 4 -k uvicorn.workers.UvicornWorker web_server:app --bind 0.0.0.0:8000
       "
 
+  notifications_nginx:
+    image: nginx:latest
+    networks:
+      - project_network
+    ports:
+      - "85:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./src/core:/etc/nginx/conf.d:ro
+    depends_on:
+      - notifications_app
+    restart: unless-stopped
 
 volumes:
   pg_data_notifications:
