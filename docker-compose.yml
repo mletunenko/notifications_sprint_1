@@ -2,6 +2,8 @@ services:
 
   notifications_rabbitmq:
     image: rabbitmq:3.13
+    networks:
+      - project_network
     ports:
       - "5672:5672"
 
@@ -17,6 +19,23 @@ services:
       - "30002:30002"
     command:
       ["postgres", "-c", "log_statement=all"]
+
+  notifications_app:
+    build: .
+    networks:
+      - project_network
+    env_file:
+      - .env
+    ports:
+      - "8005:8000"
+    command: >
+      sh -c "
+      /scripts/wait-for-it.sh notifications_rabbitmq:5672 -s -t 60 &&
+      /scripts/wait-for-it.sh notifications_pg:30002 -s -t 60 &&
+      alembic upgrade head &&
+      gunicorn -w 4 -k uvicorn.workers.UvicornWorker web_server:app --bind 0.0.0.0:8000
+      "
+
 
 volumes:
   pg_data_notifications:

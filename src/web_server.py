@@ -32,7 +32,7 @@ if settings.sentry_enable:
 
 if __name__ == "__main__":
     uvicorn.run(
-        "main:app",
+        "web_server:app",
         host=settings.run.host,
         port=settings.run.port,
         reload=True,
