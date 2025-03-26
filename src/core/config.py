@@ -32,9 +32,9 @@ class LogstashConfig(BaseModel):
 class MailTransportSettings(BaseModel):
     host: str = "smtp.yandex.ru"
     port: int = 465
-    domain: str
-    login: str
-    password: str
+    domain: str = "yandex.ru"
+    login: str = "marialetunenko"
+    password: str = "elzurvjrhqtjoqud"
 
     @property
     def email(self):
