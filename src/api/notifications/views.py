@@ -1,13 +1,32 @@
 import json
 
 from aio_pika import Message
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, Depends
+from sqlalchemy import select
 from starlette.status import HTTP_200_OK
 
+from db.postgres import SessionDep
 from db.rabbit import RabbitDep
-from schemas.notifications import CreateTaskSchemaIn
+from models import NotificationModel
+from schemas.notifications import CreateTaskSchemaIn, NotificationListParams, NotificationSchemaOut
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
+
+
+@router.get(path="/", summary="Получить список нотификаций")
+async def list_notifications(
+    session: SessionDep,
+    query_params: NotificationListParams = Depends(),
+) -> list[NotificationSchemaOut]:
+    stmt = select(NotificationModel).order_by(NotificationModel.created_at.desc())
+    if query_params.user_id:
+        stmt = stmt.where(NotificationModel.user_id==query_params.user_id)
+    stmt = (stmt.offset((query_params.pagination.page_number - 1) * query_params.pagination.page_size)
+            .limit(query_params.pagination.page_size))
+    result = await session.execute(stmt)
+    notifications_list = result.scalars().all()
+    response = [NotificationSchemaOut.model_validate(obj, from_attributes=True) for obj in notifications_list]
+    return response
 
 
 @router.post(path="/create_task", summary="Поставить в очередь отправку уведомления")
