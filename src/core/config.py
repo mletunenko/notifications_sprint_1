@@ -61,6 +61,7 @@ class Settings(BaseSettings):
     auth_host: str = "127.0.0.1"
     auth_port: str = "8000"
     user_path: str = "/auth/users"
+    user_list_path: str = "/autn/users"
 
     welcome_email_template_id: str = "7606d2de-81a7-4df0-8d38-c0c807ad7615"
     welcome_email_subject: str = "Добро пожаловать!"

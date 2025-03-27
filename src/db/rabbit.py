@@ -20,6 +20,10 @@ class RabbitMQConnection:
         connection = await self.connect()
         return await connection.channel()
 
+    async def close(self):
+        if self.connection:
+            self.connection.close()
+
 
 rabbitmq = RabbitMQConnection()
 

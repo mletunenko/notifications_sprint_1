@@ -49,6 +49,20 @@ services:
       python worker.py
       "
 
+  notifications_scheduler:
+    build: .
+    networks:
+      - project_network
+    env_file:
+      - .env
+    command: >
+      sh -c "
+      /scripts/wait-for-it.sh notifications_rabbitmq:5672 -s -t 60 &&
+      /scripts/wait-for-it.sh notifications_pg:30002 -s -t 60 &&
+      python scheduler.py
+      "
+
+
   notifications_nginx:
     image: nginx:latest
     networks:

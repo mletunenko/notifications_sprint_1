@@ -22,3 +22,7 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "async_fastapi_jwt_auth.*"
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "apscheduler.*"
+ignore_missing_imports = true
