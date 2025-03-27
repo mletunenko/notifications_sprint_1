@@ -6,7 +6,7 @@ select = ["I", "Q", "E", "ANN", "F"]
 ignore = [ "ANN001", "ANN002", "ANN003", "ANN201", "ANN401"]
 
 [tool.mypy]
-
+mypy_path = "src"
 exclude = "venv"
 
 

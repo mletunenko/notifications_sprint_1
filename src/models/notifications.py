@@ -2,8 +2,9 @@ from pydantic import UUID4
 from sqlalchemy import Enum
 from sqlalchemy.orm import Mapped, mapped_column
 
-from models import Base
 from utils.enums import NotificationMethodEnum
+
+from .base import Base
 
 
 class NotificationModel(Base):

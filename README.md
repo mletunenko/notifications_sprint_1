@@ -36,7 +36,12 @@ pass: 8s.mf#2FRbVVRj7
 6. Запуск приложения
 
 ```bash
-python src/main.py 
+python src/web_server.py 
+```
+7. Запуск воркера
+
+```bash
+python src/worker.py 
 ```
 
 # Tests

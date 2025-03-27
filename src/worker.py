@@ -1,9 +1,10 @@
 import asyncio
 import json
+
 import aio_pika
 
 from core.config import settings
-from providers import EmailProvider
+from providers.providers import EmailProvider
 
 
 async def process_message(message: aio_pika.IncomingMessage):
@@ -24,7 +25,7 @@ async def process_message(message: aio_pika.IncomingMessage):
 
     except Exception as e:
         print(f"Error processing message: {e}")
-        await message.nack(requeue=True)
+        await message.nack(requeue=False)
 
 
 async def consume():

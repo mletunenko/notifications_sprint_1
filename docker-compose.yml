@@ -36,6 +36,19 @@ services:
       gunicorn -w 4 -k uvicorn.workers.UvicornWorker web_server:app --bind 0.0.0.0:8000
       "
 
+  notifications_worker:
+    build: .
+    networks:
+      - project_network
+    env_file:
+      - .env
+    command: >
+      sh -c "
+      /scripts/wait-for-it.sh notifications_rabbitmq:5672 -s -t 60 &&
+      /scripts/wait-for-it.sh notifications_pg:30002 -s -t 60 &&
+      python worker.py
+      "
+
   notifications_nginx:
     image: nginx:latest
     networks:

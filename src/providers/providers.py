@@ -3,16 +3,15 @@ import smtplib
 from email.message import EmailMessage
 
 import aiohttp
-
 import backoff
 from aiohttp import ClientConnectionError
 from jinja2 import Template
 from sqlalchemy import select
-from sqlalchemy.sql.functions import session_user
 
 from core.config import settings
 from db.postgres import new_session
-from models import TemplateModel, NotificationModel
+from models.notifications import NotificationModel
+from models.templates import TemplateModel
 from utils.enums import NotificationMethodEnum
 
 
@@ -27,7 +26,7 @@ class AbstractProvider(abc.ABC):
 
 
 class EmailProvider(AbstractProvider):
-    def __init__(self, template_id, user_id, subject):
+    def __init__(self, template_id, user_id, subject) -> None:
         self.template_id: str = template_id
         self.user_id: str = user_id
         self.subject: str = subject
@@ -38,12 +37,13 @@ class EmailProvider(AbstractProvider):
             stmt = select(TemplateModel).where(TemplateModel.id == template_id)
             result = await pg_session.execute(stmt)
             template = result.scalars().first()
+            assert template is not None
             return template.body
 
     @backoff.on_exception(backoff.expo, ClientConnectionError, max_time=15)
     async def get_context(self, user_id: str) -> dict:
         context = {}
-        url = f"http://{settings.auth_host}{settings.user_path}/{user_id}"
+        url = f"http://{settings.auth_host}:{settings.auth_port}{settings.user_path}/{user_id}"
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 data = await response.json()
@@ -52,7 +52,7 @@ class EmailProvider(AbstractProvider):
 
     @backoff.on_exception(backoff.expo, ClientConnectionError, max_time=15)
     async def get_address(self, user_id: str) -> str:
-        url = f"http://{settings.auth_host}{settings.user_path}/{user_id}"
+        url = f"http://{settings.auth_host}:{settings.auth_port}{settings.user_path}/{user_id}"
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 data = await response.json()

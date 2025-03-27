@@ -3,10 +3,10 @@ from pydantic import UUID4
 from sqlalchemy import select
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
 
-from utils.enums import ClientErrorMessage
 from db.postgres import SessionDep
 from models import TemplateModel
 from schemas.templates import TemplateListParams, TemplateSchemaIn, TemplateSchemaOut
+from utils.enums import ClientErrorMessage
 
 router = APIRouter(prefix="/templates", tags=["templates"])
 
