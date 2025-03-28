@@ -52,9 +52,7 @@ class Settings(BaseSettings):
     db: DatabaseConfig = DatabaseConfig()
     logstash: LogstashConfig = LogstashConfig()
     sentry_enable: bool = True
-    sentry_sdk: str = (
-        "https://21ebc037b0d0f712c4cd5e246511459b@o4508946947702784.ingest.us.sentry.io/4508946960875520"
-    )
+    sentry_sdk: str
     queue_host: str = "localhost"
 
     mail_transport: MailTransportSettings = MailTransportSettings()
