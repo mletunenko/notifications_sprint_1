@@ -59,7 +59,6 @@ async def create_welcome_email_task(
     user_id: UUID4,
     rabbit_chanel: RabbitDep,
 ) -> Response:
-    print(f"user_id={user_id}")
     body = {
         "template_id": settings.welcome_email_template_id,
         "user_id": str(user_id),
