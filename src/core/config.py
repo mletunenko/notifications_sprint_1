@@ -61,10 +61,5 @@ class Settings(BaseSettings):
     user_path: str = "/auth/users"
     user_list_path: str = "/autn/users"
 
-    welcome_email_template_id: str = "7606d2de-81a7-4df0-8d38-c0c807ad7615"
-    welcome_email_subject: str = "Добро пожаловать!"
-    birthday_email_template_id: str = "9548333e-93aa-4ee7-8987-cc66e0a486ae"
-    birthday_email_subject: str = "С Днём Рождения!"
-
 
 settings = Settings()

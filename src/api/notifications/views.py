@@ -4,9 +4,7 @@ from aio_pika import Message
 from fastapi import APIRouter, Depends, Response
 from pydantic import UUID4
 from sqlalchemy import select
-from starlette.status import HTTP_200_OK
 
-from core.config import settings
 from db.postgres import SessionDep
 from db.rabbit import RabbitDep
 from models import NotificationModel
@@ -59,9 +57,9 @@ async def create_welcome_email_task(
     rabbit_channel: RabbitDep,
 ) -> Response:
     body = {
-        "template_id": settings.welcome_email_template_id,
+        "template_id": "7606d2de-81a7-4df0-8d38-c0c807ad7615",
         "user_id": str(user_id),
-        "subject": settings.welcome_email_subject,
+        "subject": "Добро пожаловать!",
         "method": "email",
     }
     json_body = json.dumps(body)

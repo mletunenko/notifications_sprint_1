@@ -32,9 +32,9 @@ async def get_birth_day_users(page_number):
 
 async def create_birthday_task(user_id):
     body = {
-        "template_id": settings.birthday_email_template_id,
+        "template_id": "9548333e-93aa-4ee7-8987-cc66e0a486ae",
         "user_id": user_id,
-        "subject": settings.birthday_email_subject,
+        "subject": "С Днём Рождения!",
         "method": "email",
     }
     json_body = json.dumps(body)
