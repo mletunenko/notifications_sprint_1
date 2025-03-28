@@ -28,8 +28,7 @@ async def list_notifications(
     )
     result = await session.execute(stmt)
     notifications_list = result.scalars().all()
-    response = [NotificationSchemaOut.model_validate(obj, from_attributes=True) for obj in notifications_list]
-    return response
+    return notifications_list
 
 
 @router.post(path="/create_task", summary="Поставить в очередь отправку уведомления")

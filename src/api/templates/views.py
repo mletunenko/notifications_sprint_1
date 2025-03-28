@@ -20,31 +20,28 @@ async def get_templates_list(
         like = f"%{query_params.body}%"
         stmt = stmt.filter(TemplateModel.body.ilike(like))
     result = await session.execute(stmt)
-    obj_list = result.scalars().all()
-    response = [TemplateSchemaOut.model_validate(obj, from_attributes=True) for obj in obj_list]
-    return response
+    template_list = result.scalars().all()
+    return template_list
 
 
 @router.get("/{template_id}", summary="Получить шаблон по id")
 async def get_template(template_id: UUID4, session: SessionDep) -> TemplateSchemaOut:
     stmt = select(TemplateModel).where(TemplateModel.id == template_id)
     result = await session.execute(stmt)
-    obj = result.scalars().first()
-    if not obj:
+    template = result.scalars().first()
+    if not template:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND, detail=ClientErrorMessage.NOT_FOUND_TEMPLATE_ERROR.value
         )
-    response = TemplateSchemaOut.model_validate(obj, from_attributes=True)
-    return response
+    return template
 
 
 @router.post("", summary="Создать шаблон")
 async def create_template(data: TemplateSchemaIn, session: SessionDep) -> TemplateSchemaOut:
-    new_obj = TemplateModel(body=data.body)
-    session.add(new_obj)
+    new_template = TemplateModel(body=data.body)
+    session.add(new_template)
     await session.commit()
-    response = TemplateSchemaOut.model_validate(new_obj, from_attributes=True)
-    return response
+    return new_template
 
 
 @router.patch(path="/{template_id}", summary="Обновление шаблона")
@@ -63,9 +60,7 @@ async def update_template(
     template.body = data.body
     session.add(template)
     await session.commit()
-    await session.refresh(template)
-    response = TemplateSchemaOut.model_validate(template, from_attributes=True)
-    return response
+    return template
 
 
 @router.delete(path="/{template_id}", summary="Удалить шаблон")
