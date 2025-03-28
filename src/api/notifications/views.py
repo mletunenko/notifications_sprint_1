@@ -53,7 +53,7 @@ async def create_notification_task(
 
 @router.post(
     path="/create_welcome_task",
-    summary="Поставить в очередь отправку уведомления зарегестировавшемуся пользователю",
+    summary="Поставить в очередь отправку уведомления зарегестированному пользователю",
 )
 async def create_welcome_email_task(
     user_id: UUID4,
