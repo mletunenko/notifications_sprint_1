@@ -48,7 +48,7 @@ async def create_notification_task(
         Message(body=json_body.encode()),
         routing_key="notifications",
     )
-    return Response(status_code=HTTP_200_OK)
+    return Response()
 
 
 @router.post(
@@ -72,4 +72,4 @@ async def create_welcome_email_task(
         Message(body=json_body.encode()),
         routing_key="notifications",
     )
-    return Response(status_code=HTTP_200_OK)
+    return Response()
