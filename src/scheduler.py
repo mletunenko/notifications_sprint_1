@@ -39,9 +39,9 @@ async def create_birthday_task(user_id):
     }
     json_body = json.dumps(body)
     rabbit = RabbitMQConnection()
-    rabbit_chanel = await rabbit.get_channel()
-    await rabbit_chanel.declare_queue("notifications", durable=True)
-    await rabbit_chanel.default_exchange.publish(
+    rabbit_channel = await rabbit.get_channel()
+    await rabbit_channel.declare_queue("notifications", durable=True)
+    await rabbit_channel.default_exchange.publish(
         Message(body=json_body.encode()),
         routing_key="notifications",
     )
