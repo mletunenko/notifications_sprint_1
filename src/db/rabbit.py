@@ -24,6 +24,10 @@ class RabbitMQConnection:
         if self.connection:
             self.connection.close()
 
+    async def declare_notifications_queue(self):
+        channel = await self.get_channel()
+        await channel.declare_queue("notifications", durable=True)
+
 
 rabbitmq = RabbitMQConnection()
 

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 import logstash
@@ -8,6 +9,7 @@ from fastapi import APIRouter, FastAPI
 from api.notifications.views import router as notifications_router
 from api.templates.views import router as templates_router
 from core.config import settings
+from db.rabbit import RabbitMQConnection
 
 app = FastAPI()
 
@@ -31,6 +33,9 @@ if settings.sentry_enable:
     )
 
 if __name__ == "__main__":
+    rabbit = RabbitMQConnection()
+    asyncio.run(rabbit.declare_notifications_queue())
+
     uvicorn.run(
         "web_server:app",
         host=settings.run.host,
