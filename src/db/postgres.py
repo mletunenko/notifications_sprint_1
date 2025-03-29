@@ -14,6 +14,7 @@ new_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
 async def get_session():
+    # используется контекстный менеджер - rollback будет излишним?
     async with new_session() as session:
         yield session
 
