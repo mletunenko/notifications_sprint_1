@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, Response
 from pydantic import UUID4
-from sqlalchemy import select
-from starlette.status import HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
+from starlette.status import HTTP_204_NO_CONTENT
 
 from db.postgres import SessionDep
 from models import TemplateModel
+from schemas.services.templates import TemplateService
 from schemas.templates import TemplateListParams, TemplateSchemaIn, TemplateSchemaOut
-from utils.enums import ClientErrorMessage
 
 router = APIRouter(prefix="/templates", tags=["templates"])
 
@@ -15,32 +14,19 @@ router = APIRouter(prefix="/templates", tags=["templates"])
 async def get_templates_list(
     session: SessionDep, query_params: TemplateListParams = Depends()
 ) -> list[TemplateModel]:
-    stmt = select(TemplateModel)
-    if query_params.body:
-        like = f"%{query_params.body}%"
-        stmt = stmt.filter(TemplateModel.body.ilike(like))
-    result = await session.execute(stmt)
-    template_list = list(result.scalars().all())
+    template_list = await TemplateService.get_templates_list(session, query_params)
     return template_list
 
 
 @router.get("/{template_id}", summary="Получить шаблон по id", response_model=TemplateSchemaOut)
 async def get_template(template_id: UUID4, session: SessionDep) -> TemplateModel:
-    stmt = select(TemplateModel).where(TemplateModel.id == template_id)
-    result = await session.execute(stmt)
-    template = result.scalars().first()
-    if not template:
-        raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND, detail=ClientErrorMessage.NOT_FOUND_TEMPLATE_ERROR.value
-        )
+    template = await TemplateService.get_template(template_id, session)
     return template
 
 
 @router.post("", summary="Создать шаблон", response_model=TemplateSchemaOut)
 async def create_template(data: TemplateSchemaIn, session: SessionDep) -> TemplateModel:
-    new_template = TemplateModel(body=data.body)
-    session.add(new_template)
-    await session.commit()
+    new_template = await TemplateService.create_template(data, session)
     return new_template
 
 
@@ -50,28 +36,11 @@ async def update_template(
     data: TemplateSchemaIn,
     session: SessionDep,
 ) -> TemplateModel:
-    stmt = select(TemplateModel).where(TemplateModel.id == template_id)
-    result = await session.execute(stmt)
-    template = result.scalars().first()
-    if not template:
-        raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND, detail=ClientErrorMessage.NOT_FOUND_TEMPLATE_ERROR.value
-        )
-    template.body = data.body
-    session.add(template)
-    await session.commit()
+    template = await TemplateService.update_template(template_id, data, session)
     return template
 
 
 @router.delete(path="/{template_id}", summary="Удалить шаблон")
 async def delete_template(template_id: UUID4, session: SessionDep) -> Response:
-    stmt = select(TemplateModel).where(TemplateModel.id == template_id)
-    result = await session.execute(stmt)
-    template = result.scalars().first()
-    if not template:
-        raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND, detail=ClientErrorMessage.NOT_FOUND_TEMPLATE_ERROR.value
-        )
-    await session.delete(template)
-    await session.commit()
+    await TemplateService.delete_template(template_id, session)
     return Response(status_code=HTTP_204_NO_CONTENT)
