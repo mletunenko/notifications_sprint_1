@@ -7,8 +7,6 @@ from sqlalchemy import TIMESTAMP, MetaData
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-from core.config import settings
-
 
 class Base(DeclarativeBase):
     __abstract__ = True
