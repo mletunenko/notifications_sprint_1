@@ -43,8 +43,7 @@ class Settings(BaseSettings):
     run: RunConfig = RunConfig()
     db: DatabaseConfig = DatabaseConfig()
     logstash: LogstashConfig = LogstashConfig()
-    sentry_enable: bool = True
-    sentry_sdk: str
+    sentry_sdk: str | None = None
     queue_host: str = "localhost"
 
     mail_transport: MailTransportSettings = MailTransportSettings()

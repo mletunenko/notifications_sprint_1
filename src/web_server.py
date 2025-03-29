@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logstash.LogstashHandler(settings.logstash.host, settings.logstash.port, version=1))
 logger.info("FastAPI подключен к Logstash!", extra={"tags": ["notifications"]})
 
-if settings.sentry_enable:
+if settings.sentry_sdk:
     sentry_sdk.init(
         dsn=settings.sentry_sdk,
         traces_sample_rate=1.0,
