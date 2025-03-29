@@ -11,21 +11,21 @@ from utils.enums import ClientErrorMessage
 router = APIRouter(prefix="/templates", tags=["templates"])
 
 
-@router.get("", summary="Получить список шаблонов")
+@router.get("", summary="Получить список шаблонов", response_model=list[TemplateSchemaOut])
 async def get_templates_list(
     session: SessionDep, query_params: TemplateListParams = Depends()
-) -> list[TemplateSchemaOut]:
+) -> list[TemplateModel]:
     stmt = select(TemplateModel)
     if query_params.body:
         like = f"%{query_params.body}%"
         stmt = stmt.filter(TemplateModel.body.ilike(like))
     result = await session.execute(stmt)
-    template_list = result.scalars().all()
+    template_list = list(result.scalars().all())
     return template_list
 
 
-@router.get("/{template_id}", summary="Получить шаблон по id")
-async def get_template(template_id: UUID4, session: SessionDep) -> TemplateSchemaOut:
+@router.get("/{template_id}", summary="Получить шаблон по id", response_model=TemplateSchemaOut)
+async def get_template(template_id: UUID4, session: SessionDep) -> TemplateModel:
     stmt = select(TemplateModel).where(TemplateModel.id == template_id)
     result = await session.execute(stmt)
     template = result.scalars().first()
@@ -36,20 +36,20 @@ async def get_template(template_id: UUID4, session: SessionDep) -> TemplateSchem
     return template
 
 
-@router.post("", summary="Создать шаблон")
-async def create_template(data: TemplateSchemaIn, session: SessionDep) -> TemplateSchemaOut:
+@router.post("", summary="Создать шаблон", response_model=TemplateSchemaOut)
+async def create_template(data: TemplateSchemaIn, session: SessionDep) -> TemplateModel:
     new_template = TemplateModel(body=data.body)
     session.add(new_template)
     await session.commit()
     return new_template
 
 
-@router.patch(path="/{template_id}", summary="Обновление шаблона")
+@router.patch(path="/{template_id}", summary="Обновление шаблона", response_model=TemplateSchemaOut)
 async def update_template(
     template_id: UUID4,
     data: TemplateSchemaIn,
     session: SessionDep,
-) -> TemplateSchemaOut:
+) -> TemplateModel:
     stmt = select(TemplateModel).where(TemplateModel.id == template_id)
     result = await session.execute(stmt)
     template = result.scalars().first()

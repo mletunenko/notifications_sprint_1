@@ -13,11 +13,11 @@ from schemas.notifications import CreateTaskSchemaIn, NotificationListParams, No
 router = APIRouter(prefix="/notifications", tags=["notifications"])
 
 
-@router.get(path="/", summary="Получить список нотификаций")
+@router.get(path="/", summary="Получить список нотификаций", response_model=list[NotificationSchemaOut])
 async def list_notifications(
     session: SessionDep,
     query_params: NotificationListParams = Depends(),
-) -> list[NotificationSchemaOut]:
+) -> list[NotificationModel]:
     stmt = select(NotificationModel).order_by(NotificationModel.created_at.desc())
     if query_params.user_id:
         stmt = stmt.where(NotificationModel.user_id == query_params.user_id)
@@ -25,7 +25,7 @@ async def list_notifications(
         query_params.pagination.page_size
     )
     result = await session.execute(stmt)
-    notifications_list = result.scalars().all()
+    notifications_list = list(result.scalars().all())
     return notifications_list
 
 
