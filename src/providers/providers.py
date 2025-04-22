@@ -26,9 +26,9 @@ class AbstractProvider(abc.ABC):
 
 
 class EmailProvider(AbstractProvider):
-    def __init__(self, template_id, user_id, subject) -> None:
+    def __init__(self, template_id, profile_id, subject) -> None:
         self.template_id: str = template_id
-        self.user_id: str = user_id
+        self.profile_id: str = profile_id
         self.subject: str = subject
         self.body: str = ""
 
@@ -41,9 +41,9 @@ class EmailProvider(AbstractProvider):
             return template.body
 
     @backoff.on_exception(backoff.expo, ClientConnectionError, max_time=15)
-    async def get_context(self, user_id: str) -> dict:
+    async def get_context(self, profile_id: str) -> dict:
         context = {}
-        url = f"http://{settings.auth_host}:{settings.auth_port}{settings.user_path}/{user_id}"
+        url = f"http://{settings.profile_service.host}:{settings.profile_service.port}{settings.profile_service.profile_path}/{profile_id}"
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 data = await response.json()
@@ -51,8 +51,11 @@ class EmailProvider(AbstractProvider):
         return context
 
     @backoff.on_exception(backoff.expo, ClientConnectionError, max_time=15)
-    async def get_address(self, user_id: str) -> str:
-        url = f"http://{settings.auth_host}:{settings.auth_port}{settings.user_path}/{user_id}"
+    async def get_address(self, profile_id: str) -> str:
+        url = (
+            f"http://{settings.profile_service.host}:"
+            f"{settings.profile_service.port}{settings.profile_service.profile_path}/{profile_id}"
+        )
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 data = await response.json()
@@ -60,15 +63,16 @@ class EmailProvider(AbstractProvider):
 
     async def prepare_message(self):
         template_str = await self.get_template(self.template_id)
-        context = await self.get_context(self.user_id)
+        context = await self.get_context(self.profile_id)
         template = Template(template_str)
         self.body = template.render(context)
 
     async def send_message(self) -> None:
+        # ! with ?
         server = smtplib.SMTP_SSL(settings.mail_transport.host, settings.mail_transport.port)
         server.login(settings.mail_transport.login, settings.mail_transport.password)
 
-        address = await self.get_address(self.user_id)
+        address = await self.get_address(self.profile_id)
         message = EmailMessage()
         message["From"] = settings.mail_transport.email
         message["To"] = address
@@ -79,7 +83,7 @@ class EmailProvider(AbstractProvider):
             server.sendmail(settings.mail_transport.email, [address], message.as_string())
 
             notification = NotificationModel(
-                user_id=self.user_id,
+                profile_id=self.profile_id,
                 method=NotificationMethodEnum.EMAIL,
                 address=address,
                 subject=self.subject,

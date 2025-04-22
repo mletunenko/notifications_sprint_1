@@ -9,7 +9,7 @@ from .base import Base
 
 class NotificationModel(Base):
     __tablename__ = "notifications"
-    user_id: Mapped[UUID4] = mapped_column()
+    profile_id: Mapped[UUID4] = mapped_column()
     method: Mapped[NotificationMethodEnum] = mapped_column(
         Enum(NotificationMethodEnum, name="notification_method")
     )

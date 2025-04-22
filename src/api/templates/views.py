@@ -4,8 +4,8 @@ from starlette.status import HTTP_204_NO_CONTENT
 
 from db.postgres import SessionDep
 from models import TemplateModel
-from schemas.services.templates import TemplateService
 from schemas.templates import TemplateListParams, TemplateSchemaIn, TemplateSchemaOut
+from services.templates import TemplateService
 
 router = APIRouter(prefix="/templates", tags=["templates"])
 

@@ -5,6 +5,7 @@ from aio_pika.abc import AbstractChannel
 from fastapi import Depends
 
 from core.config import settings
+from core.consts import GENERAL_NOTIFICATIONS_QUEUE, WELCOME_NOTIFICATIONS_QUEUE
 
 
 class RabbitMQConnection:
@@ -13,7 +14,11 @@ class RabbitMQConnection:
 
     async def connect(self):
         if not self.connection or self.connection.is_closed:
-            self.connection = await aio_pika.connect_robust(host=settings.queue_host)
+            self.connection = await aio_pika.connect_robust(
+                host=settings.rabbit.host,
+                login=settings.rabbit.login,
+                password=settings.rabbit.password,
+            )
         return self.connection
 
     async def get_channel(self):
@@ -24,9 +29,10 @@ class RabbitMQConnection:
         if self.connection:
             self.connection.close()
 
-    async def declare_notifications_queue(self):
+    async def declare_queues(self):
         channel = await self.get_channel()
-        await channel.declare_queue("notifications", durable=True)
+        await channel.declare_queue(WELCOME_NOTIFICATIONS_QUEUE, durable=True)
+        await channel.declare_queue(GENERAL_NOTIFICATIONS_QUEUE, durable=True)
 
 
 rabbitmq = RabbitMQConnection()

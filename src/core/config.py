@@ -33,6 +33,18 @@ class MailTransportSettings(BaseModel):
         return f"{self.login}@{self.domain}"
 
 
+class RabbitConfig(BaseModel):
+    host: str = "localhost"
+    login: str = "admin"
+    password: str = "password"
+
+
+class ProfileConfig(BaseModel):
+    host: str = "localhost"
+    port: int = 8006
+    profile_path: str = "/profiles/api/profiles"
+
+
 class Settings(BaseSettings):
     model_config = ConfigDict(  # type: ignore
         env_file=(".env"),
@@ -44,13 +56,10 @@ class Settings(BaseSettings):
     db: DatabaseConfig = DatabaseConfig()
     logstash: LogstashConfig = LogstashConfig()
     sentry_sdk: str | None = None
-    queue_host: str = "localhost"
 
     mail_transport: MailTransportSettings = MailTransportSettings()
-    auth_host: str = "127.0.0.1"
-    auth_port: str = "8000"
-    user_path: str = "/auth/users"
-    user_list_path: str = "/autn/users"
+    profile_service: ProfileConfig = ProfileConfig()
+    rabbit: RabbitConfig = RabbitConfig()
 
 
 settings = Settings()

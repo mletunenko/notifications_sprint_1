@@ -9,14 +9,14 @@ from utils.enums import NotificationMethodEnum
 
 class CreateTaskSchemaIn(BaseModel):
     template_id: UUID4
-    user_id: UUID4
+    profile_id: UUID4
     subject: str | None = None
     method: NotificationMethodEnum
 
 
 class NotificationSchemaOut(BaseModel):
     created_at: datetime
-    user_id: UUID4
+    profile_id: UUID4
     method: str
     address: str
     subject: str | None = None
@@ -25,5 +25,5 @@ class NotificationSchemaOut(BaseModel):
 
 class NotificationListParams(BaseModel):
     # sort: str = Field("-created_at", description="Поле сортировки")
-    user_id: UUID4 | None = None
+    profile_id: UUID4 | None = None
     pagination: PaginationParams = Depends()

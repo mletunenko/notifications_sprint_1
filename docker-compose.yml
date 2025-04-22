@@ -1,12 +1,5 @@
 services:
 
-  notifications_rabbitmq:
-    image: rabbitmq:3.13
-    networks:
-      - project_network
-    ports:
-      - "5672:5672"
-
   notifications_pg:
     image: postgres:16
     env_file:
@@ -30,7 +23,7 @@ services:
       - "8005:8000"
     command: >
       sh -c "
-      /scripts/wait-for-it.sh notifications_rabbitmq:5672 -s -t 60 &&
+      /scripts/wait-for-it.sh rabbitmq:5672 -s -t 60 &&
       /scripts/wait-for-it.sh notifications_pg:30002 -s -t 60 &&
       alembic upgrade head &&
       gunicorn -w 4 -k uvicorn.workers.UvicornWorker web_server:app --bind 0.0.0.0:8000
@@ -44,7 +37,7 @@ services:
       - .env
     command: >
       sh -c "
-      /scripts/wait-for-it.sh notifications_rabbitmq:5672 -s -t 60 &&
+      /scripts/wait-for-it.sh rabbitmq:5672 -s -t 60 &&
       /scripts/wait-for-it.sh notifications_pg:30002 -s -t 60 &&
       python worker.py
       "
@@ -57,11 +50,10 @@ services:
       - .env
     command: >
       sh -c "
-      /scripts/wait-for-it.sh notifications_rabbitmq:5672 -s -t 60 &&
+      /scripts/wait-for-it.sh rabbitmq:5672 -s -t 60 &&
       /scripts/wait-for-it.sh notifications_pg:30002 -s -t 60 &&
       python scheduler.py
       "
-
 
   notifications_nginx:
     image: nginx:latest

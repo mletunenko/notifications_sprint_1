@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends, Response
 from pydantic import UUID4
 
@@ -6,7 +5,7 @@ from db.postgres import SessionDep
 from db.rabbit import RabbitDep
 from models import NotificationModel
 from schemas.notifications import CreateTaskSchemaIn, NotificationListParams, NotificationSchemaOut
-from schemas.services.notifications import NotificationService
+from services.notifications import NotificationService
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
 
@@ -34,8 +33,8 @@ async def create_notification_task(
     summary="Поставить в очередь отправку уведомления зарегестированному пользователю",
 )
 async def create_welcome_email_task(
-    user_id: UUID4,
+    profile_id: UUID4,
     rabbit_channel: RabbitDep,
 ) -> Response:
-    await NotificationService.create_welcome_email_task(user_id, rabbit_channel)
+    await NotificationService.create_welcome_email_task(profile_id, rabbit_channel)
     return Response()

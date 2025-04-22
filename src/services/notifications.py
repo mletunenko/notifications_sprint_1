@@ -16,8 +16,8 @@ class NotificationService:
         session: AsyncSession, query_params: NotificationListParams
     ) -> list[NotificationModel]:
         stmt = select(NotificationModel).order_by(NotificationModel.created_at.desc())
-        if query_params.user_id:
-            stmt = stmt.where(NotificationModel.user_id == query_params.user_id)
+        if query_params.profile_id:
+            stmt = stmt.where(NotificationModel.profile_id == query_params.profile_id)
         stmt = stmt.offset(
             (query_params.pagination.page_number - 1) * query_params.pagination.page_size
         ).limit(query_params.pagination.page_size)
@@ -32,7 +32,7 @@ class NotificationService:
     ) -> None:
         body = {
             "template_id": str(data.template_id),
-            "user_id": str(data.user_id),
+            "profile_id": str(data.profile_id),
             "subject": data.subject,
             "method": data.method.value,
         }
@@ -44,12 +44,12 @@ class NotificationService:
 
     @staticmethod
     async def create_welcome_email_task(
-        user_id: UUID4,
+        profile_id: UUID4,
         rabbit_channel: AbstractChannel,
     ) -> None:
         body = {
             "template_id": "7606d2de-81a7-4df0-8d38-c0c807ad7615",
-            "user_id": str(user_id),
+            "profile_id": str(profile_id),
             "subject": "Добро пожаловать!",
             "method": "email",
         }

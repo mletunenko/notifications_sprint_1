@@ -34,7 +34,7 @@ if settings.sentry_sdk:
 
 if __name__ == "__main__":
     rabbit = RabbitMQConnection()
-    asyncio.run(rabbit.declare_notifications_queue())
+    asyncio.run(rabbit.declare_queues())
 
     uvicorn.run(
         "web_server:app",

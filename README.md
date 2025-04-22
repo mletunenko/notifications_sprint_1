@@ -22,9 +22,9 @@ pip install --upgrade pip && pip install -r requirements.txt
 Так же поднятие контейнеров с сервисами для локальной работы доступны через 
 
 ```bash
-dc up -d notifications_pg notifications_rabbitmq
+dc up -d notifications_pg
 ```
-(dc up --build notifications_pg notifications_rabbitmq)
+(dc up --build notifications_pg)
 4. Используйте Sentry 
 
 login: mletunenko@gmail.com
@@ -70,3 +70,9 @@ pytest .
 
 Сервис хранения пользовательского контента
 - https://github.com/mletunenko/ugc_sprint_2
+
+Сервис уведомлений (текущий репозиторий)
+- https://github.com/mletunenko/notifications_sprint_1
+
+Сервис профили (Дипломный проект)
+- https://github.com/mletunenko/graduate_work
